@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Basics
 import Foundation
 
 /// The canonical identifier for a package, based on its source location.
@@ -25,33 +24,16 @@ public struct PackageIdentity: CustomStringConvertible, Sendable {
     }
 
     /// Creates a package identity from a URL.
-    /// - Parameter url: The package's URL.
-    public init(url: SourceControlURL) {
-        self.init(urlString: url.absoluteString)
-    }
-
-    /// Creates a package identity from a URL.
     /// - Parameter urlString: The package's URL.
     // FIXME: deprecate this
     public init(urlString: String) {
         self.description = PackageIdentityParser(urlString).description
     }
 
-    /// Creates a package identity from a file path.
-    /// - Parameter path: An absolute path to the package.
-    public init(path: AbsolutePath) {
-        self.description = PackageIdentityParser(path.pathString).description
-    }
-
     /// Creates a plain package identity for a root package
     /// - Parameter value: A string used to identify a package, will be used unmodified
     public static func plain(_ value: String) -> PackageIdentity {
         PackageIdentity(value)
-    }
-
-    @available(*, deprecated, message: "use .registry instead")
-    public var scopeAndName: (scope: Scope, name: Name)? {
-        self.registry.flatMap { (scope: $0.scope, name: $0.name) }
     }
 
     public var registry: RegistryIdentity? {
@@ -304,16 +286,6 @@ struct PackageIdentityParser {
         self.description = Self.computeDefaultName(fromLocation: string).lowercased()
     }
 
-    /// Compute the default name of a package given its URL.
-    public static func computeDefaultName(fromURL url: SourceControlURL) -> String {
-        Self.computeDefaultName(fromLocation: url.absoluteString)
-    }
-
-    /// Compute the default name of a package given its path.
-    public static func computeDefaultName(fromPath path: AbsolutePath) -> String {
-        Self.computeDefaultName(fromLocation: path.pathString)
-    }
-
     /// Compute the default name of a package given its location.
     public static func computeDefaultName(fromLocation url: String) -> String {
         #if os(Windows)
@@ -488,9 +460,9 @@ private func computeCanonicalLocation(_ string: String) -> (description: String,
 }
 
 #if os(Windows)
-fileprivate let isSeparator: (Character) -> Bool = { $0 == "/" || $0 == "\\" }
+fileprivate func isSeparator(_ char: Character) -> Bool { char == "/" || char == "\\" }
 #else
-fileprivate let isSeparator: (Character) -> Bool = { $0 == "/" }
+fileprivate func isSeparator(_ char: Character) -> Bool { char == "/" }
 #endif
 
 extension Character {
