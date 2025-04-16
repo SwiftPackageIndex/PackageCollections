@@ -6,19 +6,14 @@ import PackageDescription
 let package = Package(
     name: "PackageCollections",
     products: [
-        // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
-            name: "PackageCollections",
-            targets: ["PackageCollections"]),
+        .library(name: "PackageCollections", targets: ["PackageCollectionsModel", "PackageModel"]),
     ],
     targets: [
-        // Targets are the basic building blocks of a package, defining a module or a test suite.
-        // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "PackageCollections"),
+        .target(name: "PackageCollectionsModel"),
+        .target(name: "PackageModel"),
         .testTarget(
             name: "PackageCollectionsTests",
-            dependencies: ["PackageCollections"]
+            dependencies: ["PackageCollectionsModel", "PackageModel"]
         ),
     ]
 )
